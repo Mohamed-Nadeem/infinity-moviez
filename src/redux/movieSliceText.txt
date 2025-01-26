@@ -10,6 +10,7 @@ const axiosInstance = axios.create({
   headers: { Authorization: `Bearer ${API_TOKEN}` },
 });
 
+// Fetch movies from TMDB API
 export const fetchMovies = createAsyncThunk("movie/fetchMovies", async () => {
   console.log("Fetching movies...");
   const response = await axiosInstance.get("/movie/popular");
