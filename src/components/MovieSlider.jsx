@@ -1,13 +1,13 @@
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-const MovieSlider = ({ title, movies, onMovieClick }) => {
+const MovieSlider = ({ movies, onMovieClick }) => {
   const sliderSettings = {
     dots: false,
     infinite: true,
-    speed: 500,
+    speed: 300,
     slidesToShow: 4,
     slidesToScroll: 2,
     responsive: [
@@ -37,16 +37,22 @@ const MovieSlider = ({ title, movies, onMovieClick }) => {
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
+      <h2 className="text-xl font-bold mb-4">{movies.title}</h2>
       <Slider {...sliderSettings}>
         {movies.map((movie) => (
-          <div key={movie.id} className="p-2 cursor-pointer" onClick={() => onMovieClick(movie)}>
+          <div
+            key={movie.id}
+            className="p-2 cursor-pointer movie-card"
+            onClick={() => onMovieClick(movie)}
+          >
             <img
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
               className="rounded-lg shadow-md w-full"
             />
-            <h3 className="text-center mt-2 text-sm font-medium">{movie.title}</h3>
+            <h3 className="text-center mt-2 text-sm font-medium">
+              {movie.title}
+            </h3>
           </div>
         ))}
       </Slider>
@@ -55,7 +61,6 @@ const MovieSlider = ({ title, movies, onMovieClick }) => {
 };
 
 MovieSlider.propTypes = {
-  title: PropTypes.string.isRequired,
   movies: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,

@@ -9,11 +9,13 @@ const initialState = {
   popularMovies: [],
   recentMovies: [],
   genres: [],
+  genreMovies: [],
+  trailers: {},
   loading: false,
   error: null,
 };
 
-// Async Thunks
+// Fetch most popular movies
 export const fetchPopularMovies = createAsyncThunk(
   "movies/fetchPopularMovies",
   async () => {
@@ -24,6 +26,7 @@ export const fetchPopularMovies = createAsyncThunk(
   }
 );
 
+// Fetch most recent movies
 export const fetchRecentMovies = createAsyncThunk(
   "movies/fetchRecentMovies",
   async () => {
@@ -34,13 +37,36 @@ export const fetchRecentMovies = createAsyncThunk(
   }
 );
 
-export const fetchGenres = createAsyncThunk(
-  "movies/fetchGenres",
-  async () => {
+// Fetch all genres
+export const fetchGenres = createAsyncThunk("movies/fetchGenres", async () => {
+  const response = await axios.get(
+    `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`
+  );
+  return response.data.genres;
+});
+
+// Fetch trailers by id
+export const fetchMovieTrailers = createAsyncThunk(
+  "movies/fetchMovieTrailers",
+  async (movieId) => {
     const response = await axios.get(
-      `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`
+      `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`
     );
-    return response.data.genres;
+    const trailer = response.data.results.find(
+      (video) => video.type === "Trailer" && video.site === "YouTube"
+    );
+    return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
+  }
+);
+
+// Fetch movies by genre
+export const fetchMoviesByGenre = createAsyncThunk(
+  "movies/fetchMoviesByGenre",
+  async (genreId) => {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}`
+    );
+    return response.data.results;
   }
 );
 
@@ -87,6 +113,24 @@ const movieSlice = createSlice({
         state.genres = action.payload;
       })
       .addCase(fetchGenres.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      //Trailer
+      .addCase(fetchMovieTrailers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.trailers[action.meta.arg] = action.payload;
+      })
+      .addCase(fetchMovieTrailers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      // Movies by Genre
+      .addCase(fetchMoviesByGenre.fulfilled, (state, action) => {
+        state.genreMovies = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchMoviesByGenre.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
