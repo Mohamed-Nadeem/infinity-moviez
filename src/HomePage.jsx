@@ -5,6 +5,7 @@ import {
   fetchRecentMovies,
   fetchGenres,
 } from "./redux/movieSlice";
+import MoviePopup from "./components/MoviePopup";
 import MovieSlider from "./components/MovieSlider";
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMovies, setFilteredMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   // Fetch data on component mount
   useEffect(() => {
@@ -35,6 +37,15 @@ const App = () => {
       setFilteredMovies([]);
     }
   }, [searchQuery, popularMovies, recentMovies]);
+
+  const handleMovieClick = (movie) => {
+    setSelectedMovie(movie); // Open the popup with movie details
+  };
+
+  const closePopup = () => {
+    setSelectedMovie(null); // Close the popup
+  };
+
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -57,7 +68,7 @@ const App = () => {
         <div>
           <h2 className="text-2xl font-bold mb-2">Search Results</h2>
           {filteredMovies.length > 0 ? (
-            <MovieSlider movies={filteredMovies} />
+            <MovieSlider movies={filteredMovies} onMovieClick={handleMovieClick} />
           ) : (
             <p>No movies found for &quot;{searchQuery}&quot;</p>
           )}
@@ -69,13 +80,13 @@ const App = () => {
         <>
           <section>
             <h2 className="text-2xl font-bold mb-2">Popular Movies</h2>
-            <MovieSlider movies={popularMovies} />
+            <MovieSlider movies={popularMovies} onMovieClick={handleMovieClick} />
           </section>
 
           {/* Recent Movies Slider */}
           <section>
             <h2 className="text-2xl font-bold mb-2">Recent Movies</h2>
-            <MovieSlider movies={recentMovies} />
+            <MovieSlider movies={recentMovies} onMovieClick={handleMovieClick} />
           </section>
 
           {/* Genre Categories (Optional) */}
@@ -93,6 +104,10 @@ const App = () => {
             </div>
           </section>
         </>
+      )}
+      {/* Popup Component */}
+      {selectedMovie && (
+        <MoviePopup movie={selectedMovie} onClose={closePopup} />
       )}
     </div>
   );

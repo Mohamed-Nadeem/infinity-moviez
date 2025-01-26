@@ -3,10 +3,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PropTypes from 'prop-types';
 
-const MovieSlider = ({ title, movies }) => {
+const MovieSlider = ({ title, movies, onMovieClick }) => {
   const sliderSettings = {
     dots: false,
-    infinite: false,
+    infinite: true,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 2,
@@ -40,13 +40,13 @@ const MovieSlider = ({ title, movies }) => {
       <h2 className="text-xl font-bold mb-4">{title}</h2>
       <Slider {...sliderSettings}>
         {movies.map((movie) => (
-          <div key={movie.id} className="p-2">
+          <div key={movie.id} className="p-2 cursor-pointer" onClick={() => onMovieClick(movie)}>
             <img
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
-              className="rounded-lg"
+              className="rounded-lg shadow-md w-full"
             />
-            <h3 className="text-sm mt-2">{movie.title}</h3>
+            <h3 className="text-center mt-2 text-sm font-medium">{movie.title}</h3>
           </div>
         ))}
       </Slider>
@@ -63,6 +63,7 @@ MovieSlider.propTypes = {
       title: PropTypes.string.isRequired,
     })
   ).isRequired,
+  onMovieClick: PropTypes.func.isRequired,
 };
 
 export default MovieSlider;
