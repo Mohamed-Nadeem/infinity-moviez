@@ -44,10 +44,18 @@ const HomePage = () => {
   // Filter movies based on search query
   useEffect(() => {
     if (searchQuery) {
-      const combinedMovies = [...popularMovies, ...recentMovies, ...genreMovies, ...topRatedMovies];
-      const results = combinedMovies.filter((movie) =>
+      const combinedMovies = [...popularMovies, ...recentMovies, ...topRatedMovies];
+      
+      // Remove duplicates based on movie ID
+      const uniqueMovies = Array.from(
+        new Map(combinedMovies.map((movie) => [movie.id, movie])).values()
+      );
+  
+      // Filter the uniqueMovies by the search query
+      const results = uniqueMovies.filter((movie) =>
         movie.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
+  
       setFilteredMovies(results);
     } else {
       setFilteredMovies([]);
