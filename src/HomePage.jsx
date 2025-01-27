@@ -52,7 +52,7 @@ const HomePage = () => {
     } else {
       setFilteredMovies([]);
     }
-  }, [searchQuery, popularMovies, recentMovies]);
+  }, [searchQuery, popularMovies, recentMovies, genreMovies, topRatedMovies]);
 
   // Handle movie click event for Popup
   const handleMovieClick = (movie) => {
