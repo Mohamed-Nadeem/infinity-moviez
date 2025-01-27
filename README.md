@@ -6,19 +6,24 @@ The Infinity Moviez App is a website built with React, Vite, Redux, and Tailwind
 
 #Installation guide:
 
-1. Clone the Repository
-    git clone (the repo link)
-2. Install Dependencies
-    cd movie-viewer-app
-    npm install
+1. Clone the Repository:    
+    "git clone + (the repo link)"
+2. Install Dependencies:    
+    "cd movie-viewer-app"    then    
+    "npm install"
 
-3. Run the Application Locally
-    npm run dev
+3. Run the Application Locally:    
+    "npm run dev"
 
 #Technologies Used:
 
-React - JavaScript library for building user interfaces.
-Vite - A fast and lightweight development build tool.
-Redux - A state management tool for JavaScript applications.
-Axios - Promise-based HTTP client for making API requests.
-Tailwind CSS - A utility-first CSS framework for creating responsive and modern designs.
+React - JavaScript library for building user interfaces. 
+
+Vite - A fast and lightweight development build tool.    
+
+Redux - A state management tool for JavaScript applications. 
+
+Axios - Promise-based HTTP client for making API requests.  
+
+Tailwind CSS - A utility-first CSS framework for creating responsive and modern designs. 
+
