@@ -28,3 +28,14 @@
 .spinner {
     height: 200px;
 }
+
+#chartjs-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.2s ease-in-out;
+}
+  

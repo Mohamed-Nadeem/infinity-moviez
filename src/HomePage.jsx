@@ -4,19 +4,23 @@ import { FaSearch } from "react-icons/fa";
 import {
   fetchPopularMovies,
   fetchRecentMovies,
+  fetchTopRatedMovies,
   fetchGenres,
   fetchMovieTrailers,
   fetchMoviesByGenre,
 } from "./redux/movieSlice";
 import MoviePopup from "./components/MoviePopup";
 import MovieSlider from "./components/MovieSlider";
+import TopRatedMoviesChart from "./components/TopRatedMoviesChart";
 import "./index.css";
 
 const HomePage = () => {
   const dispatch = useDispatch();
+   // Access the global state from Redux state
   const {
     popularMovies,
     recentMovies,
+    topRatedMovies,
     genres,
     trailers,
     genreMovies,
@@ -27,19 +31,20 @@ const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [selectedGenre, setSelectedGenre] = useState("No Genre Selected!");
+  const [selectedGenre, setSelectedGenre] = useState("Select a Genre...");
 
   // Fetch data on component mount
   useEffect(() => {
     dispatch(fetchPopularMovies());
     dispatch(fetchRecentMovies());
     dispatch(fetchGenres());
+    dispatch(fetchTopRatedMovies());
   }, [dispatch]);
 
   // Filter movies based on search query
   useEffect(() => {
     if (searchQuery) {
-      const combinedMovies = [...popularMovies, ...recentMovies];
+      const combinedMovies = [...popularMovies, ...recentMovies, ...genreMovies, ...topRatedMovies];
       const results = combinedMovies.filter((movie) =>
         movie.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -49,6 +54,7 @@ const HomePage = () => {
     }
   }, [searchQuery, popularMovies, recentMovies]);
 
+  // Handle movie click event for Popup
   const handleMovieClick = (movie) => {
     setSelectedMovie(movie); // Open the popup with movie details
     if (!trailers[movie.id]) {
@@ -56,10 +62,12 @@ const HomePage = () => {
     }
   };
 
+   // Close the popup
   const closePopup = () => {
-    setSelectedMovie(null); // Close the popup
+    setSelectedMovie(null); 
   };
 
+ // Handle genre click event
   const handleGenreClick = (genre) => {
     setSelectedGenre(genre.name);
     dispatch(fetchMoviesByGenre(genre.id));
@@ -69,8 +77,8 @@ const HomePage = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen p-4">
-      <header className="flex justify-between items-center p-4 bg-gray-900 text-white">
+    <div className="bg-gray-900 text-white min-h-screen p-4 ">
+      <header className="flex justify-between items-center p-4 bg-gray-900 text-white mb-8">
         <div className="flex items-center">
           <img src="/logo.png" alt="Logo" className="w-12 h-12 mr-2" />
           <h1 className="text-2xl font-bold">Infinity Moviez</h1>
@@ -120,6 +128,16 @@ const HomePage = () => {
               movies={recentMovies}
               onMovieClick={handleMovieClick}
             />
+          </section>
+
+           {/* Top Rated Movies Chart */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold mb-4">All Time Top Rated Movies</h2>
+            {topRatedMovies.length > 0 ? (
+              <TopRatedMoviesChart movies={topRatedMovies.slice(0, 20)} />
+            ) : (
+              <p>No top-rated movies available...</p>
+            )}
           </section>
 
           {/* Genre Categories */}

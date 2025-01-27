@@ -8,6 +8,7 @@ const API_KEY = "15ff4b4d4b4e86b16795f529edd47022";
 const initialState = {
   popularMovies: [],
   recentMovies: [],
+  topRatedMovies: [],
   genres: [],
   genreMovies: [],
   trailers: {},
@@ -32,6 +33,24 @@ export const fetchRecentMovies = createAsyncThunk(
   async () => {
     const response = await axios.get(
       `https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}`
+    );
+    return response.data.results;
+  }
+);
+
+// Fetch all-time highest-rated movies
+export const fetchTopRatedMovies = createAsyncThunk(
+  "movies/fetchTopRatedMovies",
+  async () => {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/discover/movie`,
+      {
+        params: {
+          api_key: API_KEY,
+          sort_by: "vote_average.desc", // Sort by highest ratings
+          "vote_count.gte": 1000, // Include movies with at least 1000 votes
+        },
+      }
     );
     return response.data.results;
   }
@@ -103,6 +122,18 @@ const movieSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      // Top Rated Movies
+      .addCase(fetchTopRatedMovies.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTopRatedMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.topRatedMovies = action.payload;
+      })
+      .addCase(fetchTopRatedMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       // Genres
       .addCase(fetchGenres.pending, (state) => {
         state.loading = true;
@@ -137,5 +168,4 @@ const movieSlice = createSlice({
   },
 });
 
-// Export Reducer
 export default movieSlice.reducer;

@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick-theme.css";
 import PropTypes from "prop-types";
 
 const MovieSlider = ({ movies, onMovieClick }) => {
+  // Slider settings
   const sliderSettings = {
     dots: false,
     infinite: true,

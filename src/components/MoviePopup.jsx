@@ -1,14 +1,14 @@
 import PropTypes from "prop-types";
-import { useEffect } from "react";
-const MoviePopup = ({ movie, onClose }) => {
-  useEffect(() => {
-    if (movie?.id) {
-      console.log("Fetching genres for movie:", movie?.id);
-    }
-  }, [movie?.id]);
+import { useSelector } from "react-redux";
 
+const MoviePopup = ({ movie, onClose }) => {
+  // Access genres from Redux state
+  const { genres } = useSelector((state) => state.movies);
+
+  // If no movie is selected, return null to avoid rendering
   if (!movie) return null;
 
+  // Destructure movie properties for display
   const {
     title,
     overview,
@@ -16,7 +16,13 @@ const MoviePopup = ({ movie, onClose }) => {
     original_language,
     release_date,
     trailer,
+    genre_ids,
   } = movie;
+
+  // Map genre_ids to genre names using the genres array
+  const movieGenres = genre_ids
+    .map((id) => genres.find((genre) => genre.id === id)?.name) // Map IDs to names
+    .filter((name) => name); // Filter out undefined names
 
   return (
     <div
@@ -33,6 +39,7 @@ const MoviePopup = ({ movie, onClose }) => {
         >
           ✖
         </button>
+        {/* Movie Details */}
         <h2 className="text-2xl font-bold mb-4">{title}</h2>
         <p className="text-sm text-gray-400 mb-4">{overview}</p>
         <p className="text-gray-400">
@@ -44,8 +51,23 @@ const MoviePopup = ({ movie, onClose }) => {
         <p className="text-gray-400">
           <strong>Language:</strong> {original_language}
         </p>
+        {/* Genres Section */}
         <div className="genre-list mt-4">
           <strong>Genres:</strong>{" "}
+          {movieGenres.length > 0 ? (
+            <div className="flex flex-wrap mt-2">
+              {movieGenres.map((genre, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full mr-2 mb-2"
+                >
+                  {genre}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500">No genres available.</p>
+          )}
         </div>
         <div className="mt-4">
           {trailer ? (
@@ -79,6 +101,7 @@ MoviePopup.propTypes = {
     release_date: PropTypes.string,
     trailer: PropTypes.string,
     id: PropTypes.number,
+    genre_ids: PropTypes.arrayOf(PropTypes.number)
   }),
   onClose: PropTypes.func.isRequired,
 };
